@@ -12,6 +12,8 @@
 
 extern char ***_NSGetArgv(void);
 extern int _NSGetArgc(void);
+extern int mkfifo (const char *, mode_t);
+
 
 @implementation AppController
 - (void)awakeFromNib
@@ -20,21 +22,17 @@ extern int _NSGetArgc(void);
 	latestDate = [NSDate distantPast];
 	[latestDate retain];
 	
-	filePath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
+	specPath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
 	
-	fileUrl = [@"file://" stringByAppendingString:[filePath stringByStandardizingPath]];
+	fileUrl = @"file:///Users/michael/code/rspec-cukeapp/template/index.html";
 	
-	NSLog(@"Watching file %@", filePath);
+	NSLog(@"Speccing directory %@", specPath);
 	NSLog(@"And opening URL %@", fileUrl);
+	
+	[self startSpecRunner];
 	
 	[webView setDrawsBackground:FALSE];
 	[[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:fileUrl]]];
-
-	[NSTimer scheduledTimerWithTimeInterval:0.2
-									 target:self
-								   selector:@selector(reload)
-								   userInfo: nil
-									repeats:YES];
 }
 
 - (NSString *)getFileFromCommandLine
@@ -43,11 +41,11 @@ extern int _NSGetArgc(void);
 	NSString *commandLineArg;
 	NSString *fullFilePath;
 	
-	if (sizeof(argv) > 1) {
+	if (sizeof(argv) > 1 && argv[1] != nil) {
 		commandLineArg = [[NSString alloc] initWithCString: argv[1] encoding:1];
 	} else {
-		NSLog(@"Need a file to monitor");
-		exit(1);
+		commandLineArg = @"~/code/limecast";
+		NSLog(@"No argument specified, using %@", commandLineArg);
 	}
 	
 	if ([[commandLineArg stringByExpandingTildeInPath] hasPrefix:@"/"]) {
@@ -59,21 +57,111 @@ extern int _NSGetArgc(void);
 	return fullFilePath;
 }
 
-- (void)reload
+- (void)startSpecRunner
 {
-	if(![fileManager fileExistsAtPath:filePath])
-		return;
-	NSDictionary *attributes = [fileManager attributesOfItemAtPath:filePath error:nil];
+	specRunner = [[NSTask alloc] init];
 	
-	NSDate *fileModificationDate = [attributes valueForKey:@"NSFileModificationDate"];
-	[fileModificationDate retain];
+	NSDictionary *environment;
+	environment = [NSDictionary dictionaryWithObject:@"-r /Users/michael/code/rspec-cukeapp/lib/rspec-cukeapp -f CukeappFormatter"
+											  forKey:@"SPEC_OPTS"];
+	[specRunner setEnvironment:environment];
 	
-	if ([fileModificationDate compare:latestDate] == NSOrderedDescending){
-		// NSLog(@"updating");
-		[webView reload:self];
-		// NSLog(@"%@", fileModificationDate);
-		latestDate = fileModificationDate;
+	NSArray *arguments = [NSArray arrayWithObjects:@"spec", nil];
+	[specRunner setArguments:arguments];
+	
+	[specRunner setCurrentDirectoryPath:specPath];
+	[specRunner setLaunchPath:@"/opt/local/bin/rake"];
+	
+	[self setupPipe];
+	[specRunner launch];
+}
+
+- (void)setupPipe
+{
+	const char * path = "/tmp/cuke-pipe";
+	if(mkfifo(path, 0666) == -1 && errno !=EEXIST){
+		NSLog(@"Unable to open the named pipe %c", path);
 	}
+	
+	int fd = open(path, O_RDWR | O_NDELAY);
+	filehandleForReading = [[NSFileHandle alloc] initWithFileDescriptor:fd closeOnDealloc: YES];
+	
+	NSNotificationCenter *nc;
+	nc = [NSNotificationCenter defaultCenter];
+	[nc removeObserver:self];
+	[nc addObserver:self
+		   selector:@selector(dataReady:)
+			   name:NSFileHandleReadCompletionNotification
+			 object:filehandleForReading];
+	[filehandleForReading readInBackgroundAndNotify];
+}
+
+- (void)closePipe
+{
+	[filehandleForReading dealloc];
+}
+
+- (void)dataReady:(NSNotification *)n
+{
+	NSData *d;
+	d = [[n userInfo] valueForKey:NSFileHandleNotificationDataItem];
+	
+	NSLog(@"dataReady:%d bytes", [d length]);
+	
+	NSString *dataString;
+	dataString = [[NSString alloc] initWithData:d encoding:NSASCIIStringEncoding];
+	
+	if ([d length]) {
+		[self appendData:dataString];
+	}
+	
+	//Tell the fileHandler to asychronusly report back
+	[filehandleForReading readInBackgroundAndNotify];
+}
+
+- (void)appendData:(NSString *)data
+{
+	// When we pass the json to webkit it becomes unescaped, so we need to re-escape it
+	NSString *escapedSlashes = [data stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
+	NSString *escapedQuotes = [escapedSlashes stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+	
+	// Remove the trailing newline character
+	NSString *trimmedString = [escapedQuotes substringWithRange:NSMakeRange(0, [escapedQuotes length]-1)];
+	
+	NSString *script = [[NSString alloc] initWithFormat:@"handle(\"%@\");", trimmedString];
+	NSLog(@"SCRIPT: %@", script);
+	
+	[webView stringByEvaluatingJavaScriptFromString:script];
+}
+
+- (void)reload:(id)sender
+{
+	[self killSpecRunner];
+	[webView reload:sender];
+	[self startSpecRunner];
+}
+
+- (void)killSpecRunner
+{
+	// BAD RSPEC!
+	while([specRunner isRunning]) {
+		[specRunner terminate];
+	}
+	[self closePipe];
+	[specRunner dealloc];
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+	NSLog(@"app should terminate");
+	[self killSpecRunner];
+	return NSTerminateNow;
+}
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+	NSLog(@"app terminating");
+	[self killSpecRunner];
 }
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename

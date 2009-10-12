@@ -10,5 +10,7 @@
 
 int main(int argc, char *argv[])
 {
+	[[NSUserDefaults standardUserDefaults] registerDefaults: [NSDictionary dictionaryWithObject: @"YES"
+																						 forKey: @"WebKitDeveloperExtras"]];
     return NSApplicationMain(argc,  (const char **) argv);
 }
