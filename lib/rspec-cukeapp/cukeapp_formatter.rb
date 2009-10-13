@@ -9,7 +9,7 @@ class CukeappFormatter < Spec::Runner::Formatter::BaseTextFormatter
   
   def initialize(options, output)
     super
-    @pipe = open("/tmp/cuke-pipe", "w+")
+    @pipe = open(ENV['SPEC_PIPE'] || "/tmp/spec-pipe", "w+")
     at_exit { @pipe.close }
     @example_group_number = 0
     @example_number = 0
