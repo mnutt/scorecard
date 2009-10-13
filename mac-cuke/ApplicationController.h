@@ -14,20 +14,20 @@
 	IBOutlet WebView *webView;
 	IBOutlet WebView *largeWebView;
 	NSString *specPath;
+	NSString *pipePath;
 	NSString *fileUrl;
 	NSFileManager *fileManager;
 	NSDate *latestDate;
 	NSTask *specRunner;
 	NSFileHandle *filehandleForReading;
 }
-- (NSString *) getFileFromCommandLine;
+- (NSString *) getCommandLineArgs;
 - (void) startSpecRunner;
 - (void) killSpecRunner;
 - (void) setupPipe;
 - (void) closePipe;
 - (IBAction) reload:(id)sender;
 - (void) appendData:(NSString *)data;
-- (void) applicationWillTerminate:(NSNotification *)aNotification;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender;
 - (BOOL) application:(NSApplication *)theApplication openFile:(NSString *)filename;
 @end

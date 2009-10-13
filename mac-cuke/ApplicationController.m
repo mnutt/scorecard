@@ -22,11 +22,14 @@ extern int mkfifo (const char *, mode_t);
 	latestDate = [NSDate distantPast];
 	[latestDate retain];
 	
-	specPath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
+//	specPath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
+	
 	
 	fileUrl = @"file:///Users/michael/code/rspec-cukeapp/template/index.html";
 	
-	NSLog(@"Speccing directory %@", specPath);
+	pipePath = @"/tmp/spec-pipe";
+	
+	NSLog(@"Speccing directory %@", [fileManager currentDirectoryPath]);
 	NSLog(@"And opening URL %@", fileUrl);
 	
 	[self startSpecRunner];
@@ -35,42 +38,32 @@ extern int mkfifo (const char *, mode_t);
 	[[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:fileUrl]]];
 }
 
-- (NSString *)getFileFromCommandLine
+- (NSString *)getCommandLineArgs
 {
 	char **argv = *_NSGetArgv();
 	NSString *commandLineArg;
-	NSString *fullFilePath;
 	
 	if (sizeof(argv) > 1 && argv[1] != nil) {
 		commandLineArg = [[NSString alloc] initWithCString: argv[1] encoding:1];
 	} else {
-		commandLineArg = @"~/code/limecast";
+		commandLineArg = @"";
 		NSLog(@"No argument specified, using %@", commandLineArg);
 	}
 	
-	if ([[commandLineArg stringByExpandingTildeInPath] hasPrefix:@"/"]) {
-		fullFilePath = [[NSString alloc] initWithString:[commandLineArg stringByExpandingTildeInPath]];
-	} else {
-		fullFilePath = [[NSString alloc] initWithString:[[[[NSFileManager defaultManager] currentDirectoryPath] stringByAppendingString:@"/"] stringByAppendingString:commandLineArg]];
-	}
-	
-	return fullFilePath;
+	return commandLineArg;
 }
 
 - (void)startSpecRunner
 {
 	specRunner = [[NSTask alloc] init];
 	
-	NSDictionary *environment;
-	environment = [NSDictionary dictionaryWithObject:@"-r /Users/michael/code/rspec-cukeapp/lib/rspec-cukeapp -f CukeappFormatter"
-											  forKey:@"SPEC_OPTS"];
-	[specRunner setEnvironment:environment];
-	
-	NSArray *arguments = [NSArray arrayWithObjects:@"spec", nil];
+	NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
+	NSString *helperPath = [thisBundle pathForResource:@"specviz-helper" ofType:@"sh"];
+	NSArray *arguments = [NSArray arrayWithObjects:helperPath, @"/Users/michael/code/limecast", pipePath, [self getCommandLineArgs], nil];
 	[specRunner setArguments:arguments];
 	
-	[specRunner setCurrentDirectoryPath:specPath];
-	[specRunner setLaunchPath:@"/opt/local/bin/rake"];
+//	[specRunner setCurrentDirectoryPath:@"~/code/limecast"];
+	[specRunner setLaunchPath:@"/bin/bash"];
 	
 	[self setupPipe];
 	[specRunner launch];
@@ -78,7 +71,7 @@ extern int mkfifo (const char *, mode_t);
 
 - (void)setupPipe
 {
-	const char * path = "/tmp/cuke-pipe";
+	const char * path = [pipePath cStringUsingEncoding:NSASCIIStringEncoding];
 	if(mkfifo(path, 0666) == -1 && errno !=EEXIST){
 		NSLog(@"Unable to open the named pipe %c", path);
 	}
@@ -103,6 +96,8 @@ extern int mkfifo (const char *, mode_t);
 
 - (void)dataReady:(NSNotification *)n
 {
+	if(![specRunner isRunning]) { return; }
+	
 	NSData *d;
 	d = [[n userInfo] valueForKey:NSFileHandleNotificationDataItem];
 	
@@ -143,11 +138,12 @@ extern int mkfifo (const char *, mode_t);
 
 - (void)killSpecRunner
 {
+	[self closePipe];
 	// BAD RSPEC!
-	while([specRunner isRunning]) {
+	if([specRunner isRunning]) {
+		NSLog(@"TERMINATE: %@", specRunner);
 		[specRunner terminate];
 	}
-	[self closePipe];
 	[specRunner dealloc];
 }
 
@@ -156,12 +152,6 @@ extern int mkfifo (const char *, mode_t);
 	NSLog(@"app should terminate");
 	[self killSpecRunner];
 	return NSTerminateNow;
-}
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification
-{
-	NSLog(@"app terminating");
-	[self killSpecRunner];
 }
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
