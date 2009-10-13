@@ -10,7 +10,9 @@
 
 int main(int argc, char *argv[])
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	[[NSUserDefaults standardUserDefaults] registerDefaults: [NSDictionary dictionaryWithObject: @"YES"
 																						 forKey: @"WebKitDeveloperExtras"]];
+	[pool release];
     return NSApplicationMain(argc,  (const char **) argv);
 }
