@@ -48,6 +48,7 @@ class CukeappFormatter < Spec::Runner::Formatter::BaseTextFormatter
     move_progress
     passed = {
       'status' => 'passed',
+      'group' => @example_group.description,
       'description' => h(example.description)
     }
     @pipe.puts(passed.to_json)
@@ -61,6 +62,7 @@ class CukeappFormatter < Spec::Runner::Formatter::BaseTextFormatter
     failure_style = failure.pending_fixed? ? 'pending_fixed' : 'failed'
     failed = {
       'status' => 'failed',
+      'group' => @example_group.description,
       'description' => example.description,
       'message' => failure.exception.message,
       'backtrace' => format_backtrace(failure.exception.backtrace),

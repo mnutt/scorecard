@@ -132,6 +132,7 @@ extern int mkfifo (const char *, mode_t);
 - (void)reload:(id)sender
 {
 	[self killSpecRunner];
+	NSLog(@"starting back up");
 	[webView reload:sender];
 	[self startSpecRunner];
 }
@@ -140,11 +141,16 @@ extern int mkfifo (const char *, mode_t);
 {
 	[self closePipe];
 	// BAD RSPEC!
+	NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
+	NSString *killPath = [thisBundle pathForResource:@"kill_rspec" ofType:@"sh"];
+	[NSTask launchedTaskWithLaunchPath:killPath arguments:[NSArray arrayWithObjects:nil]];
+	
 	if([specRunner isRunning]) {
 		NSLog(@"TERMINATE: %@", specRunner);
 		[specRunner terminate];
+		[specRunner dealloc];
+		specRunner = nil;
 	}
-	[specRunner dealloc];
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender

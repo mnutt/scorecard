@@ -11,6 +11,7 @@
 		4C531725108422C400E39D5B /* specviz-helper.sh in Resources */ = {isa = PBXBuildFile; fileRef = 4C531724108422C400E39D5B /* specviz-helper.sh */; };
 		4C62A1BD107C4D270068FBB0 /* ApplicationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C62A1BC107C4D270068FBB0 /* ApplicationController.m */; };
 		4C62A1CB107C53240068FBB0 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C62A1CA107C53240068FBB0 /* WebKit.framework */; };
+		4CE163891084631D009AB921 /* kill_rspec.sh in Resources */ = {isa = PBXBuildFile; fileRef = 4CE163881084631D009AB921 /* kill_rspec.sh */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -29,6 +30,7 @@
 		4C62A1BB107C4D270068FBB0 /* ApplicationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationController.h; sourceTree = "<group>"; };
 		4C62A1BC107C4D270068FBB0 /* ApplicationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationController.m; sourceTree = "<group>"; };
 		4C62A1CA107C53240068FBB0 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = /System/Library/Frameworks/WebKit.framework; sourceTree = "<absolute>"; };
+		4CE163881084631D009AB921 /* kill_rspec.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = kill_rspec.sh; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Cuke-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Cuke-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Cuke.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cuke.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -49,6 +51,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				4CE163881084631D009AB921 /* kill_rspec.sh */,
 				4C62A1BB107C4D270068FBB0 /* ApplicationController.h */,
 				4C62A1BC107C4D270068FBB0 /* ApplicationController.m */,
 			);
@@ -169,6 +172,7 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				4C531725108422C400E39D5B /* specviz-helper.sh in Resources */,
+				4CE163891084631D009AB921 /* kill_rspec.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

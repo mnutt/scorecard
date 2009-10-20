@@ -22,7 +22,7 @@
         float: left;
       }
 
-      #failures {
+      #cases {
         margin-top: 50px;
         width: 70%;
         float: left;
@@ -33,12 +33,11 @@
         height: 12px;
       }
 
-      #failures .fail {
+      #cases .fail, #cases .pass {
         margin-bottom: 1em;
       }
 
-      #failures .fail .scenario {
-        background-color: #A20;
+      #cases .scenario {
         margin:0;
         padding: 2px 5px;
         -webkit-border-top-right-radius: 5px;
@@ -47,7 +46,15 @@
         -moz-border-radius-topright: 5px;
       }
 
-      #failures .fail .info {
+      #cases .fail .scenario {
+        background-color: #A20;
+      }
+
+      #cases .pass .scenario {
+        background-color: #0A2;
+      }
+
+      #cases .info {
         padding: 5px;
         background-color: #444;
         font-size: 0.8em;
@@ -57,7 +64,7 @@
         -moz-border-radius-topright: 5px;
       }
 
-      #failures .fail .info .description {
+      #cases .info .description {
         margin-top: 3px;
       }
 
@@ -133,6 +140,26 @@
       function handlePassingSpec(data) {
         var img = $("<img src='images/circle_green.png'>");
         $('#spec_pool').append(img);
+
+        var passInfo = $("<div class='info'></div>");
+        passInfo.append("<div class='description'>"+data.description+"</div>");
+
+        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '');
+        if($('#'+sanitized).length > 0) {
+           $('#'+sanitized).append(passInfo);
+        } else {
+          var pass = $("<div id='"+sanitized+"' class='pass'></div>");
+          pass.append("<div class='scenario'>"+data.group+"</div>");      
+          pass.append(passInfo);
+  
+          $('#cases').append(pass);
+        }
+        img.data('ref', sanitized);
+
+        img.click(function() {
+          $('#cases > div').hide();
+          $('#'+$(this).data('ref')).show().parent().show();
+        });
       }
 
       function handlePendingSpec(data) {
@@ -144,8 +171,10 @@
         var img = $("<img src='images/circle_red.png'>");
         $('#spec_pool').append(img);
 
-        var fail = $("<div class='fail'></div>");
-        fail.append("<div class='scenario'>"+"TODO"+"</div>");
+        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '');
+
+        var fail = $("<div id='"+sanitized+"' class='fail'></div>");
+        fail.append("<div class='scenario'>"+data.group+"</div>");
 
         var failInfo = $("<div class='info'></div>");
         failInfo.append("<div class='description'>"+data.description+"</div>");
@@ -154,12 +183,19 @@
         failInfo.append("<pre class='ruby'><code>"+data.snippet+"</code></pre>");
         fail.append(failInfo);
       
-        $('#failures').append(fail);
+        $('#cases').prepend(fail);
+        img.data('ref', sanitized);
+
+        img.click(function() {
+          $('#cases > div').hide();
+          $('#'+$(this).data('ref')).parent().show();
+        });
       }
       
       function handleProgress(data) {
         $('#progress').text(data.progress + "%");
       }
+
     </script>
 
   </head>
@@ -167,7 +203,7 @@
   <body>
     <div id="progress">0%</div>
     <div id="spec_pool"></div>
-    <div id="failures">
+    <div id="cases">
       <div class="fail" style="display:none;">
 	<div class="scenario">
 	  NegativeNamedScopes making a something with something
