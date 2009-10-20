@@ -35,7 +35,7 @@ extern int mkfifo (const char *, mode_t);
 - (NSString *)getTemplate
 {
 	NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
-	return [thisBundle pathForResource:@"templates/index" ofType:@"html"];
+	return [thisBundle pathForResource:@"index" ofType:@"html"];
 }
 
 - (NSString *)getCommandLineArgs
