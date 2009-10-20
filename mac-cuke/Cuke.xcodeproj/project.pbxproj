@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
+		4C451855108D73E2004142FD /* circle_green.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C45184E108D73E2004142FD /* circle_green.png */; };
+		4C451856108D73E2004142FD /* circle_orange.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C45184F108D73E2004142FD /* circle_orange.png */; };
+		4C451857108D73E2004142FD /* circle_red.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C451850108D73E2004142FD /* circle_red.png */; };
+		4C451858108D73E2004142FD /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 4C451851108D73E2004142FD /* index.html */; };
+		4C451859108D73E2004142FD /* jquery.js in Sources */ = {isa = PBXBuildFile; fileRef = 4C451853108D73E2004142FD /* jquery.js */; };
+		4C45185A108D73E2004142FD /* json2.js in Sources */ = {isa = PBXBuildFile; fileRef = 4C451854108D73E2004142FD /* json2.js */; };
 		4C531725108422C400E39D5B /* specviz-helper.sh in Resources */ = {isa = PBXBuildFile; fileRef = 4C531724108422C400E39D5B /* specviz-helper.sh */; };
 		4C62A1BD107C4D270068FBB0 /* ApplicationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C62A1BC107C4D270068FBB0 /* ApplicationController.m */; };
 		4C62A1CB107C53240068FBB0 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C62A1CA107C53240068FBB0 /* WebKit.framework */; };
@@ -26,6 +32,12 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		4C45184E108D73E2004142FD /* circle_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circle_green.png; sourceTree = "<group>"; };
+		4C45184F108D73E2004142FD /* circle_orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circle_orange.png; sourceTree = "<group>"; };
+		4C451850108D73E2004142FD /* circle_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circle_red.png; sourceTree = "<group>"; };
+		4C451851108D73E2004142FD /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		4C451853108D73E2004142FD /* jquery.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jquery.js; sourceTree = "<group>"; };
+		4C451854108D73E2004142FD /* json2.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = json2.js; sourceTree = "<group>"; };
 		4C531724108422C400E39D5B /* specviz-helper.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "specviz-helper.sh"; sourceTree = "<group>"; };
 		4C62A1BB107C4D270068FBB0 /* ApplicationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationController.h; sourceTree = "<group>"; };
 		4C62A1BC107C4D270068FBB0 /* ApplicationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationController.m; sourceTree = "<group>"; };
@@ -109,6 +121,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4C45184C108D73E2004142FD /* template */,
 				4C531724108422C400E39D5B /* specviz-helper.sh */,
 				8D1107310486CEB800E47090 /* Cuke-Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -124,6 +137,35 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4C45184C108D73E2004142FD /* template */ = {
+			isa = PBXGroup;
+			children = (
+				4C45184D108D73E2004142FD /* images */,
+				4C451851108D73E2004142FD /* index.html */,
+				4C451852108D73E2004142FD /* javascripts */,
+			);
+			path = template;
+			sourceTree = "<group>";
+		};
+		4C45184D108D73E2004142FD /* images */ = {
+			isa = PBXGroup;
+			children = (
+				4C45184E108D73E2004142FD /* circle_green.png */,
+				4C45184F108D73E2004142FD /* circle_orange.png */,
+				4C451850108D73E2004142FD /* circle_red.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		4C451852108D73E2004142FD /* javascripts */ = {
+			isa = PBXGroup;
+			children = (
+				4C451853108D73E2004142FD /* jquery.js */,
+				4C451854108D73E2004142FD /* json2.js */,
+			);
+			path = javascripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,6 +215,10 @@
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				4C531725108422C400E39D5B /* specviz-helper.sh in Resources */,
 				4CE163891084631D009AB921 /* kill_rspec.sh in Resources */,
+				4C451855108D73E2004142FD /* circle_green.png in Resources */,
+				4C451856108D73E2004142FD /* circle_orange.png in Resources */,
+				4C451857108D73E2004142FD /* circle_red.png in Resources */,
+				4C451858108D73E2004142FD /* index.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +231,8 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				4C62A1BD107C4D270068FBB0 /* ApplicationController.m in Sources */,
+				4C451859108D73E2004142FD /* jquery.js in Sources */,
+				4C45185A108D73E2004142FD /* json2.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

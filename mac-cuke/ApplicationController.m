@@ -3,7 +3,6 @@
 //  CucumberRunner
 //
 //  Created by Michael Nutt on 10/6/09.
-//  Copyright 2009 Vanderbilt University. All rights reserved.
 //
 
 #import "ApplicationController.h"
@@ -22,20 +21,21 @@ extern int mkfifo (const char *, mode_t);
 	latestDate = [NSDate distantPast];
 	[latestDate retain];
 	
-//	specPath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
+	templateUrl = [self getTemplate];
 	
-	
-	fileUrl = @"file:///Users/michael/code/rspec-cukeapp/template/index.html";
-	
-	pipePath = @"/tmp/spec-pipe";
+	pipePath = [[NSString alloc] initWithString:[self getCommandLineArgs]];
 	
 	NSLog(@"Speccing directory %@", [fileManager currentDirectoryPath]);
-	NSLog(@"And opening URL %@", fileUrl);
-	
-	[self startSpecRunner];
+	NSLog(@"And opening URL %@", templateUrl);
 	
 	[webView setDrawsBackground:FALSE];
-	[[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:fileUrl]]];
+	[[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:templateUrl]]];
+}
+
+- (NSString *)getTemplate
+{
+	NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
+	return [thisBundle pathForResource:@"templates/index" ofType:@"html"];
 }
 
 - (NSString *)getCommandLineArgs
@@ -46,27 +46,11 @@ extern int mkfifo (const char *, mode_t);
 	if (sizeof(argv) > 1 && argv[1] != nil) {
 		commandLineArg = [[NSString alloc] initWithCString: argv[1] encoding:1];
 	} else {
-		commandLineArg = @"";
+		commandLineArg = @"/tmp/rspec-pipe";
 		NSLog(@"No argument specified, using %@", commandLineArg);
 	}
 	
 	return commandLineArg;
-}
-
-- (void)startSpecRunner
-{
-	specRunner = [[NSTask alloc] init];
-	
-	NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
-	NSString *helperPath = [thisBundle pathForResource:@"specviz-helper" ofType:@"sh"];
-	NSArray *arguments = [NSArray arrayWithObjects:helperPath, @"/Users/michael/code/limecast", pipePath, [self getCommandLineArgs], nil];
-	[specRunner setArguments:arguments];
-	
-//	[specRunner setCurrentDirectoryPath:@"~/code/limecast"];
-	[specRunner setLaunchPath:@"/bin/bash"];
-	
-	[self setupPipe];
-	[specRunner launch];
 }
 
 - (void)setupPipe
@@ -127,43 +111,6 @@ extern int mkfifo (const char *, mode_t);
 	NSLog(@"SCRIPT: %@", script);
 	
 	[webView stringByEvaluatingJavaScriptFromString:script];
-}
-
-- (void)reload:(id)sender
-{
-	[self killSpecRunner];
-	NSLog(@"starting back up");
-	[webView reload:sender];
-	[self startSpecRunner];
-}
-
-- (void)killSpecRunner
-{
-	[self closePipe];
-	// BAD RSPEC!
-	NSBundle *thisBundle = [NSBundle bundleForClass:[self class]];
-	NSString *killPath = [thisBundle pathForResource:@"kill_rspec" ofType:@"sh"];
-	[NSTask launchedTaskWithLaunchPath:killPath arguments:[NSArray arrayWithObjects:nil]];
-	
-	if([specRunner isRunning]) {
-		NSLog(@"TERMINATE: %@", specRunner);
-		[specRunner terminate];
-		[specRunner dealloc];
-		specRunner = nil;
-	}
-}
-
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
-{
-	NSLog(@"app should terminate");
-	[self killSpecRunner];
-	return NSTerminateNow;
-}
-
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
-{
-	NSLog(@"hi");
-	return TRUE;
 }
 
 @end
