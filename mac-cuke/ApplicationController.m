@@ -25,7 +25,7 @@ extern int mkfifo (const char *, mode_t);
 	specPath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
 	
 	NSLog(@"%@", [[NSBundle mainBundle] resourceURL]);
-	fileUrl = [NSString stringWithFormat:@"%@templates/index.html", [[[NSBundle mainBundle] resourceURL] absoluteURL]];
+	fileUrl = [NSString stringWithFormat:@"%@templates/default/index.html", [[[NSBundle mainBundle] resourceURL] absoluteURL]];
 	// fileUrl = @"file:///Users/michael/code/rspec-cukeapp/template/index.html";
 	
 	NSLog(@"Speccing directory %@", specPath);
