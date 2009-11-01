@@ -3,7 +3,7 @@
 //  CucumberRunner
 //
 //  Created by Michael Nutt on 10/6/09.
-//  Copyright 2009 Vanderbilt University. All rights reserved.
+//  Copyright 2009 Michael Nutt.
 //
 
 #import "ApplicationController.h"
@@ -24,12 +24,14 @@ extern int mkfifo (const char *, mode_t);
 	
 	specPath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
 	
-	fileUrl = @"file:///Users/michael/code/rspec-cukeapp/template/index.html";
+	NSLog(@"%@", [[NSBundle mainBundle] resourceURL]);
+	fileUrl = [NSString stringWithFormat:@"%@templates/index.html", [[[NSBundle mainBundle] resourceURL] absoluteURL]];
+	// fileUrl = @"file:///Users/michael/code/rspec-cukeapp/template/index.html";
 	
 	NSLog(@"Speccing directory %@", specPath);
 	NSLog(@"And opening URL %@", fileUrl);
 	
-	[self startSpecRunner];
+	[self setupPipe];
 	
 	[webView setDrawsBackground:FALSE];
 	[[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:fileUrl]]];
@@ -55,25 +57,6 @@ extern int mkfifo (const char *, mode_t);
 	}
 	
 	return fullFilePath;
-}
-
-- (void)startSpecRunner
-{
-	specRunner = [[NSTask alloc] init];
-	
-	NSDictionary *environment;
-	environment = [NSDictionary dictionaryWithObject:@"-r /Users/michael/code/rspec-cukeapp/lib/rspec-cukeapp -f CukeappFormatter"
-											  forKey:@"SPEC_OPTS"];
-	[specRunner setEnvironment:environment];
-	
-	NSArray *arguments = [NSArray arrayWithObjects:@"spec", nil];
-	[specRunner setArguments:arguments];
-	
-	[specRunner setCurrentDirectoryPath:specPath];
-	[specRunner setLaunchPath:@"/opt/local/bin/rake"];
-	
-	[self setupPipe];
-	[specRunner launch];
 }
 
 - (void)setupPipe
@@ -134,40 +117,10 @@ extern int mkfifo (const char *, mode_t);
 	[webView stringByEvaluatingJavaScriptFromString:script];
 }
 
-- (void)reload:(id)sender
-{
-	[self killSpecRunner];
-	[webView reload:sender];
-	[self startSpecRunner];
-}
-
-- (void)killSpecRunner
-{
-	// BAD RSPEC!
-	while([specRunner isRunning]) {
-		[specRunner terminate];
-	}
-	[self closePipe];
-	[specRunner dealloc];
-}
-
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
-	NSLog(@"app should terminate");
-	[self killSpecRunner];
+	[self closePipe];
 	return NSTerminateNow;
-}
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification
-{
-	NSLog(@"app terminating");
-	[self killSpecRunner];
-}
-
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
-{
-	NSLog(@"hi");
-	return TRUE;
 }
 
 @end
