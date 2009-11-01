@@ -1,29 +1,27 @@
 #!/usr/bin/env ruby
+require 'rubygems'
 
 require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. lib scorecard]))
 
 # Path to Scorecard.app binary
-scorecard_path = File.join(File.dirname(__FILE__), '..', 'vendor', 'Scorecard.app', 'Contents', 'MacOS', 'Scorecard')
+scorecard_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'vendor', 'Scorecard.app'))
 
-# Find a location to write our html file
-path = "/tmp/scorecard-#{Process.pid}.html"
-FileUtils.touch(path)
+# Find a location to write our named pipe
+path = "/tmp/scorecard-#{Process.pid}.pipe"
+# Scorecard.app now creates the named pipe
+# FileUtils.touch(path)
 
 # Pass through the args, but escape any double quotes
 args = ARGV.join(' ').gsub(/\"/, '\"')
 
-# Run specs; show updates
-rake_cmd = "rake spec SPEC_OPTS=\"--format Scorecard::Formatter #{args}\" 1> #{path} "
-puts "Rake cmd: #{rake_cmd}"
-rake_pid = fork {
-  `#{rake_cmd}`
-}
-
+# Start Scorecard.app
 scorecard_cmd = "open -a #{scorecard_path} --args #{path}"
 puts "Scorecard cmd: #{scorecard_cmd}"
 system scorecard_cmd
 
-at_exit { Process.wait }
-
+# Run specs; show updates
+rake_cmd = "rake spec SPEC_OPTS=\"--format='Scorecard::Formatter' #{args}\""
+puts "Rake cmd: #{rake_cmd}"
+system rake_cmd
 # EOF

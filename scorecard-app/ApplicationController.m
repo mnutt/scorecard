@@ -22,13 +22,11 @@ extern int mkfifo (const char *, mode_t);
 	latestDate = [NSDate distantPast];
 	[latestDate retain];
 	
-	specPath = [[NSString alloc] initWithString:[self getFileFromCommandLine]];
-	
-	NSLog(@"%@", [[NSBundle mainBundle] resourceURL]);
-	fileUrl = [NSString stringWithFormat:@"%@templates/default/index.html", [[[NSBundle mainBundle] resourceURL] absoluteURL]];
+	pipePath = [[NSString alloc] initWithString:[self getPathFromCommandLine]];
+	fileUrl = [NSString stringWithFormat:@"file://%@/templates/default/index.html", [[NSBundle mainBundle] resourcePath]];
 	// fileUrl = @"file:///Users/michael/code/scorecard/template/index.html";
 	
-	NSLog(@"Speccing directory %@", specPath);
+	NSLog(@"Reading from pipe %@", pipePath);
 	NSLog(@"And opening URL %@", fileUrl);
 	
 	[self setupPipe];
@@ -37,7 +35,7 @@ extern int mkfifo (const char *, mode_t);
 	[[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:fileUrl]]];
 }
 
-- (NSString *)getFileFromCommandLine
+- (NSString *)getPathFromCommandLine
 {
 	char **argv = *_NSGetArgv();
 	NSString *commandLineArg;
@@ -46,7 +44,7 @@ extern int mkfifo (const char *, mode_t);
 	if (sizeof(argv) > 1 && argv[1] != nil) {
 		commandLineArg = [[NSString alloc] initWithCString: argv[1] encoding:1];
 	} else {
-		commandLineArg = @"~/code/limecast";
+		commandLineArg = @"/tmp/scorecard-pipe";
 		NSLog(@"No argument specified, using %@", commandLineArg);
 	}
 	
@@ -61,12 +59,11 @@ extern int mkfifo (const char *, mode_t);
 
 - (void)setupPipe
 {
-	const char * path = "/tmp/scorecard-pipe";
-	if(mkfifo(path, 0666) == -1 && errno !=EEXIST){
-		NSLog(@"Unable to open the named pipe %c", path);
+	if(mkfifo([pipePath UTF8String], 0666) == -1 && errno !=EEXIST){
+		NSLog(@"Unable to open the named pipe %@", pipePath);
 	}
 	
-	int fd = open(path, O_RDWR | O_NDELAY);
+	int fd = open([pipePath UTF8String], O_RDWR | O_NDELAY);
 	filehandleForReading = [[NSFileHandle alloc] initWithFileDescriptor:fd closeOnDealloc: YES];
 	
 	NSNotificationCenter *nc;

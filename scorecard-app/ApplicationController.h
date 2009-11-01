@@ -13,14 +13,14 @@
 @interface AppController : NSObject {
 	IBOutlet WebView *webView;
 	IBOutlet WebView *largeWebView;
-	NSString *specPath;
+	NSString *pipePath;
 	NSString *fileUrl;
 	NSFileManager *fileManager;
 	NSDate *latestDate;
 	NSTask *specRunner;
 	NSFileHandle *filehandleForReading;
 }
-- (NSString *) getFileFromCommandLine;
+- (NSString *) getPathFromCommandLine;
 - (void) setupPipe;
 - (void) closePipe;
 - (void) appendData:(NSString *)data;
