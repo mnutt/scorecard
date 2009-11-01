@@ -21,7 +21,7 @@ puts "Scorecard cmd: #{scorecard_cmd}"
 system scorecard_cmd
 
 # Run specs; show updates
-rake_cmd = "rake spec SPEC_OPTS=\"--format='Scorecard::Formatter' #{args}\""
+rake_cmd = "SPEC_PIPE=#{path} rake spec SPEC_OPTS=\"-rubygems -rscorecard --format='Scorecard::Formatter' #{args}\""
 puts "Rake cmd: #{rake_cmd}"
 system rake_cmd
 # EOF

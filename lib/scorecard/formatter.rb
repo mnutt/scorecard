@@ -10,7 +10,7 @@ module Scorecard
     
     def initialize(options, output)
       super
-      @pipe = open(ENV['SPEC_PIPE'] || "/tmp/spec-pipe", "w+")
+      @pipe = open(ENV['SPEC_PIPE'] || "/tmp/scorecard.pipe", "w+")
       at_exit { @pipe.close }
       @example_group_number = 0
       @example_number = 0
