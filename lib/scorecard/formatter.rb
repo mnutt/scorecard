@@ -12,10 +12,10 @@ module Scorecard
     def initialize(options, output)
       super
       @pipe = open(ENV['SPEC_PIPE'] || "/tmp/scorecard.pipe", "w+")
-      at_exit { @pipe.close }
       @example_group_number = 0
       @example_number = 0
       @header_red = nil
+
     end
     
     # The number of the currently running example_group
@@ -30,6 +30,19 @@ module Scorecard
     
     def start(example_count)
       @example_count = example_count
+      start_data = {
+        'event' => 'start',
+        'example_count' => example_count
+      }
+      send_data start_data
+    end
+
+    def close
+      finish_data = {
+        'event' => 'finish'
+      }
+      send_data finish_data
+      @pipe.close
     end
 
     def example_group_started(example_group)
@@ -52,8 +65,7 @@ module Scorecard
         'status' => 'passed',
         'description' => h(example.description)
       }
-      @pipe.puts(passed.to_json)
-      @pipe.flush
+      send_data passed
     end
 
     def example_failed(example, counter, failure)
@@ -68,8 +80,7 @@ module Scorecard
         'backtrace' => format_backtrace(failure.exception.backtrace),
         'snippet' => extra
       }
-      @pipe.puts(failed.to_json)
-      @pipe.flush
+      send_data failed
     end
 
     def example_pending(example, message, deprecated_pending_location=nil)
@@ -80,13 +91,9 @@ module Scorecard
         'description' => example.description,
         'message' => h(message)
       }
-      @pipe.puts(@pending.to_json)
-      @pipe.flush
+      send_data pending
     end
 
-    # Override this method if you wish to output extra HTML for a failed spec. For example, you
-    # could output links to images or other files produced during the specs.
-    #
     def extra_failure_content(failure)
       require 'spec/runner/formatter/snippet_extractor'
       @snippet_extractor ||= Spec::Runner::Formatter::SnippetExtractor.new
@@ -95,8 +102,7 @@ module Scorecard
     
     def move_progress
       progress = { 'progress' => percent_done }
-      @pipe.puts(progress.to_json)
-      @pipe.flush
+      send_data progress
     end
 
     def percent_done
@@ -118,6 +124,11 @@ module Scorecard
         totals = "#{example_count} example#{'s' unless example_count == 1}, #{failure_count} failure#{'s' unless failure_count == 1}"
         totals << ", #{pending_count} pending" if pending_count > 0  
       end
+    end
+
+    def send_data(data)
+      @pipe.puts(data.to_json)
+      @pipe.flush
     end
   end
 end
