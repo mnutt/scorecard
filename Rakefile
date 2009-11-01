@@ -15,16 +15,16 @@ end
 
 ensure_in_path 'lib'
 require 'spec'
-require 'rspec-cukeapp'
+require 'scorecard'
 
 task :default => 'spec:run'
 
-PROJ.name = 'rspec-cukeapp'
+PROJ.name = 'scorecard'
 PROJ.authors = 'Michael Nutt'
 PROJ.email = 'michael@nuttnet.net'
-PROJ.url = 'http://mnutt.github.com/cukeapp'
-PROJ.version = RspecCukeapp::VERSION
-PROJ.rubyforge.name = 'rspec-cukeapp'
+PROJ.url = 'http://mnutt.github.com/scorecard'
+PROJ.version = Scorecard::VERSION
+PROJ.rubyforge.name = 'scorecard'
 
 PROJ.spec.opts << '--color'
 

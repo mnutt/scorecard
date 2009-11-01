@@ -1,6 +1,6 @@
 //
 //  main.m
-//  Cuke
+//  Scorecard 
 //
 //  Created by Michael Nutt on 10/7/09.
 //  Copyright 2009 Vanderbilt University. All rights reserved.

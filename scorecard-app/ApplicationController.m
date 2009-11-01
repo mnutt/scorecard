@@ -26,7 +26,7 @@ extern int mkfifo (const char *, mode_t);
 	
 	NSLog(@"%@", [[NSBundle mainBundle] resourceURL]);
 	fileUrl = [NSString stringWithFormat:@"%@templates/default/index.html", [[[NSBundle mainBundle] resourceURL] absoluteURL]];
-	// fileUrl = @"file:///Users/michael/code/rspec-cukeapp/template/index.html";
+	// fileUrl = @"file:///Users/michael/code/scorecard/template/index.html";
 	
 	NSLog(@"Speccing directory %@", specPath);
 	NSLog(@"And opening URL %@", fileUrl);
@@ -61,7 +61,7 @@ extern int mkfifo (const char *, mode_t);
 
 - (void)setupPipe
 {
-	const char * path = "/tmp/cuke-pipe";
+	const char * path = "/tmp/scorecard-pipe";
 	if(mkfifo(path, 0666) == -1 && errno !=EEXIST){
 		NSLog(@"Unable to open the named pipe %c", path);
 	}

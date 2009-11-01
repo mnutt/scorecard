@@ -1,6 +1,6 @@
 require 'spec'
 
-module RspecCukeapp
+module Scorecard
 
   # :stopdoc:
   VERSION = '0.1.0'
@@ -29,7 +29,7 @@ module RspecCukeapp
   def self.path( *args )
     args.empty? ? PATH : ::File.join(PATH, args.flatten)
   end
-end  # module RspecCukeapp
+end  # module Scorecard
 
-require File.join(File.dirname(__FILE__), 'rspec-cukeapp', 'cukeapp_formatter.rb')
+require File.join(File.dirname(__FILE__), 'scorecard', 'formatter.rb')
 # EOF

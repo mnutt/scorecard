@@ -1,10 +1,11 @@
-rspec-cukeapp
+scorecard
     by Michael Nutt
     http://nutt.im
 
 == DESCRIPTION:
 
-Provides an rspec output formatter that outputs html suitable for Cuke.app's display.
+Provides an rspec output formatter that outputs json through a named pipe for 
+Scorecard.app's display.
 
 == FEATURES/PROBLEMS:
 
@@ -12,7 +13,7 @@ Provides an rspec output formatter that outputs html suitable for Cuke.app's dis
 
 == SYNOPSIS:
 
-* Just install it with gem install rspec-cukeapp, obtain Cuke.app
+* Just install it with gem install scorecard
 
 == REQUIREMENTS:
 
@@ -20,7 +21,7 @@ Provides an rspec output formatter that outputs html suitable for Cuke.app's dis
 
 == INSTALL:
 
-* sudo gem install rspec-cukeapp
+* sudo gem install scorecard
 
 == LICENSE:
 
