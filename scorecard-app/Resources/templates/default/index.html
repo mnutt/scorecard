@@ -113,11 +113,33 @@
 
         if(data.status) {
           handleSpec(data)
-        } else if(data.progress) {
+        } else if(typeof(data.progress) != "undefined") {
           handleProgress(data);
+        } else if(typeof(data.event) != "undefined") {
+          handleEvent(data);
         } else {
           console.log("Bad data!");
+          console.log(data);
         }
+      }
+
+      function handleEvent(data) {
+        if(data.event == "start") {
+          handleStart(data);
+        } else if(data.event == "finish") {
+          handleFinish(data);
+        } else {
+          console.log("Bad event data!");
+          console.log(data);
+        }
+      }
+
+      function handleStart(data) {
+        // do something
+      }
+
+      function handleFinish(data) {
+        // do something
       }
 
       function handleSpec(data) {
@@ -160,8 +182,13 @@
       function handleProgress(data) {
         $('#progress').text(data.progress + "%");
       }
+      $(document).ready(function() {
+        if(document.location.href.match(/debugdata/)) {
+          var debugScript = $("<script src='../debug_data.js'><"+"/script>");
+          $('body').get(0).appendChild(debugScript.get(0));
+        }
+      });
     </script>
-
   </head>
 
   <body>
