@@ -1,5 +1,4 @@
 require 'erb'
-require 'json'
 require 'spec/runner/formatter/base_text_formatter'
 require 'spec/runner/formatter/no_op_method_missing'
 
@@ -63,6 +62,7 @@ module Scorecard
       move_progress
       passed = {
         'status' => 'passed',
+        'group' => @example_group.description,
         'description' => h(example.description)
       }
       send_data passed
@@ -75,6 +75,7 @@ module Scorecard
       failure_style = failure.pending_fixed? ? 'pending_fixed' : 'failed'
       failed = {
         'status' => 'failed',
+        'group' => @example_group.description,
         'description' => example.description,
         'message' => failure.exception.message,
         'backtrace' => format_backtrace(failure.exception.backtrace),
@@ -89,6 +90,7 @@ module Scorecard
       pending = {
         'status' => 'pending',
         'description' => example.description,
+        'group' => @example_group.description,
         'message' => h(message)
       }
       send_data pending
