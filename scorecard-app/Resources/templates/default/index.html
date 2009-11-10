@@ -166,7 +166,7 @@
         var passInfo = $("<div class='info'></div>");
         passInfo.append("<div class='description'>"+data.description+"</div>");
 
-        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '');
+        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '-');
         if($('#'+sanitized).length > 0) {
            $('#'+sanitized).append(passInfo);
         } else {
@@ -193,7 +193,7 @@
         var img = $("<img src='images/circle_red.png'>");
         $('#spec_pool').append(img);
 
-        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '');
+        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '-');
 
         var fail = $("<div id='"+sanitized+"' class='fail'></div>");
         fail.append("<div class='scenario'>"+data.group+"</div>");
