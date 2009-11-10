@@ -207,12 +207,12 @@
       
         $('#cases').prepend(fail);
         img.data('ref', sanitized);
-
-        img.click(function() {
-          $('#cases > div').hide();
-          $('#'+$(this).data('ref')).parent().show();
-        });
       }
+
+      $('#spec_pool img').live('click', function() {
+        $('#cases > div').hide();
+        $('#'+$(this).data('ref')).parent().show();
+      });
       
       function handleProgress(data) {
         $('#progress').text(data.progress + "%");
