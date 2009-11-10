@@ -24,7 +24,6 @@ extern int mkfifo (const char *, mode_t);
 	
 	pipePath = [[NSString alloc] initWithString:[self getPathFromCommandLine]];
 	fileUrl = [NSString stringWithFormat:@"file://%@/templates/default/index.html", [[NSBundle mainBundle] resourcePath]];
-	// fileUrl = @"file:///Users/michael/code/scorecard/template/index.html";
 	
 	NSLog(@"Reading from pipe %@", pipePath);
 	NSLog(@"And opening URL %@", fileUrl);
@@ -36,7 +35,7 @@ extern int mkfifo (const char *, mode_t);
 }
 
 - (NSString *)getPathFromCommandLine
-{
+{	
 	char **argv = *_NSGetArgv();
 	NSString *commandLineArg;
 	NSString *fullFilePath;
@@ -118,6 +117,19 @@ extern int mkfifo (const char *, mode_t);
 {
 	[self closePipe];
 	return NSTerminateNow;
+}
+
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+	[pipePath dealloc];
+	pipePath = [[NSString alloc] initWithString:filename];
+	NSLog(@"Initialized with file: %@", pipePath);
+	
+	[self closePipe];
+	[self setupPipe];
+	[webView reload:self];
+	
+	return true;
 }
 
 @end

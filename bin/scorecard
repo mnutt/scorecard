@@ -16,7 +16,8 @@ path = "/tmp/scorecard-#{Process.pid}.pipe"
 args = ARGV.join(' ').gsub(/\"/, '\"')
 
 # Start Scorecard.app
-scorecard_cmd = "open -n -a #{scorecard_path} --args #{path}"
+`touch #{path}`
+scorecard_cmd = "open -a #{scorecard_path} #{path}"
 puts "Scorecard cmd: #{scorecard_cmd}"
 system scorecard_cmd
 

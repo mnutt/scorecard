@@ -22,7 +22,7 @@
         float: left;
       }
 
-      #failures {
+      #cases {
         margin-top: 50px;
         width: 70%;
         float: left;
@@ -33,12 +33,11 @@
         height: 12px;
       }
 
-      #failures .fail {
+      #cases .fail, #cases .pass {
         margin-bottom: 1em;
       }
 
-      #failures .fail .scenario {
-        background-color: #A20;
+      #cases .scenario {
         margin:0;
         padding: 2px 5px;
         -webkit-border-top-right-radius: 5px;
@@ -47,7 +46,15 @@
         -moz-border-radius-topright: 5px;
       }
 
-      #failures .fail .info {
+      #cases .fail .scenario {
+        background-color: #A20;
+      }
+
+      #cases .pass .scenario {
+        background-color: #0A2;
+      }
+
+      #cases .info {
         padding: 5px;
         background-color: #444;
         font-size: 0.8em;
@@ -57,7 +64,7 @@
         -moz-border-radius-topright: 5px;
       }
 
-      #failures .fail .info .description {
+      #cases .info .description {
         margin-top: 3px;
       }
 
@@ -113,11 +120,33 @@
 
         if(data.status) {
           handleSpec(data)
-        } else if(data.progress) {
+        } else if(typeof(data.progress) != "undefined") {
           handleProgress(data);
+        } else if(typeof(data.event) != "undefined") {
+          handleEvent(data);
         } else {
           console.log("Bad data!");
+          console.log(data);
         }
+      }
+
+      function handleEvent(data) {
+        if(data.event == "start") {
+          handleStart(data);
+        } else if(data.event == "finish") {
+          handleFinish(data);
+        } else {
+          console.log("Bad event data!");
+          console.log(data);
+        }
+      }
+
+      function handleStart(data) {
+        // do something
+      }
+
+      function handleFinish(data) {
+        // do something
       }
 
       function handleSpec(data) {
@@ -133,6 +162,26 @@
       function handlePassingSpec(data) {
         var img = $("<img src='images/circle_green.png'>");
         $('#spec_pool').append(img);
+
+        var passInfo = $("<div class='info'></div>");
+        passInfo.append("<div class='description'>"+data.description+"</div>");
+
+        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '-');
+        if($('#'+sanitized).length > 0) {
+           $('#'+sanitized).append(passInfo);
+        } else {
+          var pass = $("<div id='"+sanitized+"' class='pass'></div>");
+          pass.append("<div class='scenario'>"+data.group+"</div>");      
+          pass.append(passInfo);
+  
+          $('#cases').append(pass);
+        }
+        img.data('ref', sanitized);
+
+        img.click(function() {
+          $('#cases > div').hide();
+          $('#'+$(this).data('ref')).show().parent().show();
+        });
       }
 
       function handlePendingSpec(data) {
@@ -144,8 +193,10 @@
         var img = $("<img src='images/circle_red.png'>");
         $('#spec_pool').append(img);
 
-        var fail = $("<div class='fail'></div>");
-        fail.append("<div class='scenario'>"+"TODO"+"</div>");
+        var sanitized = data.group.replace(/[^A-Za-z0-9]/g, '-');
+
+        var fail = $("<div id='"+sanitized+"' class='fail'></div>");
+        fail.append("<div class='scenario'>"+data.group+"</div>");
 
         var failInfo = $("<div class='info'></div>");
         failInfo.append("<div class='description'>"+data.description+"</div>");
@@ -154,12 +205,26 @@
         failInfo.append("<pre class='ruby'><code>"+data.snippet+"</code></pre>");
         fail.append(failInfo);
       
-        $('#failures').append(fail);
+        $('#cases').prepend(fail);
+        img.data('ref', sanitized);
       }
+
+      $('#spec_pool img').live('click', function() {
+        $('#cases > div').hide();
+        $('#'+$(this).data('ref')).parent().show();
+      });
       
       function handleProgress(data) {
         $('#progress').text(data.progress + "%");
       }
+
+      $(document).ready(function() {
+        if(document.location.href.match(/debugdata/) || true) {
+          var debugScript = $("<script src='../debug_data_rspec.js'><"+"/script>");
+          $('body').get(0).appendChild(debugScript.get(0));
+        }
+      });
+
     </script>
 
   </head>
@@ -167,22 +232,22 @@
   <body>
     <div id="progress">0%</div>
     <div id="spec_pool"></div>
-    <div id="failures">
+    <div id="cases">
       <div class="fail" style="display:none;">
-	<div class="scenario">
-	  NegativeNamedScopes making a something with something
-	</div>
-	
-	<div class="info">
-	  <p class="description">should not overwrite an example</p>
-	  
-	  <p class="message">expected: "foobar"<br>got: "foo"</p>
-	  <pre class="ruby"><code><span class="linenum">50</span>    <span class="ident">it</span> <span class="punct">"</span><span class="string">should be successful</span><span class="punct">"</span> <span class="keyword">do</span>
+  <div class="scenario">
+    NegativeNamedScopes making a something with something
+  </div>
+  
+  <div class="info">
+    <p class="description">should not overwrite an example</p>
+    
+    <p class="message">expected: "foobar"<br>got: "foo"</p>
+    <pre class="ruby"><code><span class="linenum">50</span>    <span class="ident">it</span> <span class="punct">"</span><span class="string">should be successful</span><span class="punct">"</span> <span class="keyword">do</span>
 <span class="linenum">51</span>      <span class="ident">do_get</span><span class="punct">(</span><span class="attribute">@podcast</span><span class="punct">.</span><span class="ident">clean_url</span><span class="punct">)</span>
 <span class="offending"><span class="linenum">52</span>      <span class="ident">response</span><span class="punct">.</span><span class="ident">should</span> <span class="ident">be_success</span></span>
 <span class="linenum">53</span>    <span class="keyword">end</span></code>
-	  </pre>
-	</div>
+    </pre>
+  </div>
       </div>
     </div>
 
