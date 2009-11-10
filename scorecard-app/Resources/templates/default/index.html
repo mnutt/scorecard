@@ -219,8 +219,8 @@
       }
 
       $(document).ready(function() {
-        if(document.location.href.match(/debugdata/)) {
-          var debugScript = $("<script src='../debug_data.js'><"+"/script>");
+        if(document.location.href.match(/debugdata/) || true) {
+          var debugScript = $("<script src='../debug_data_rspec.js'><"+"/script>");
           $('body').get(0).appendChild(debugScript.get(0));
         }
       });
