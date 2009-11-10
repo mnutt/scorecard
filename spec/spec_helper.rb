@@ -1,4 +1,7 @@
+#require 'rubygems'
 
+$LOAD_PATH.unshift File.expand_path(
+    File.join(File.dirname(__FILE__), %w[.. vendor json-1.1.9 lib]))
 require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. lib scorecard]))
 
