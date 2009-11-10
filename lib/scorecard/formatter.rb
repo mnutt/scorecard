@@ -130,6 +130,7 @@ module Scorecard
     end
 
     def send_data(data)
+      puts data.to_json
       @pipe.puts(data.to_json)
       @pipe.flush
     end
