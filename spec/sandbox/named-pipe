@@ -1,0 +1,3 @@
+{"event":"start","example_count":1}
+{"progress":0.0}
+{"group":"questionable examples","snippet":"<span class=\"linenum\">-1</span># Couldn't get snippet for \n<span class=\"linenum\">0</span><span class=\"comment\"># gem install syntax to get syntax highlighting</span>","description":"it might work","message":"This is an exception","status":"failed","backtrace":""}

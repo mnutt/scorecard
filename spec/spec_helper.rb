@@ -5,6 +5,8 @@ $LOAD_PATH.unshift File.expand_path(
 require File.expand_path(
     File.join(File.dirname(__FILE__), %w[.. lib scorecard]))
 
+require 'mocks'
+
 Spec::Runner.configure do |config|
   # == Mock Framework
   #

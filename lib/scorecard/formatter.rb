@@ -11,11 +11,13 @@ module Scorecard
     
     def initialize(options, output)
       super
-      @pipe = open(ENV['SPEC_PIPE'] || "/tmp/scorecard.pipe", "w+")
+      @pipe_path = ENV['SPEC_PIPE'] || "/tmp/scorecard.pipe"
+      @pipe_already_existed = File.exist?(@pipe_path)
+      @pipe = open(@pipe_path, "w+")
+      
       @example_group_number = 0
       @example_number = 0
       @header_red = nil
-
     end
     
     # The number of the currently running example_group
@@ -42,7 +44,9 @@ module Scorecard
         'event' => 'finish'
       }
       send_data finish_data
+      
       @pipe.close
+      FileUtils.rm(@pipe_path) unless @pipe_already_existed
     end
 
     def example_group_started(example_group)
@@ -130,7 +134,6 @@ module Scorecard
     end
 
     def send_data(data)
-      puts data.to_json
       @pipe.puts(data.to_json)
       @pipe.flush
     end
